@@ -10,6 +10,7 @@ export const addContact = (payload) => contactModel.create(payload);
 export const updateContact = async (_id, payload) => {
   const updatedContact = await contactModel.findOneAndUpdate({ _id }, payload, {
     new: true,
+    runValidators: true,
     includeResultMetadata: true,
   });
 
