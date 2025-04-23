@@ -1,10 +1,20 @@
 import contactModel from '../db/models/Contact.js';
 import { calcPaginationData } from '../utils/calcPaginationData.js';
+import { sortList } from '../constants/index.js';
 
-export const getContacts = async ({ page = 1, perPage = 10 }) => {
+export const getContacts = async ({
+  page = 1,
+  perPage = 10,
+  sortBy = '_contactId',
+  sortOrder = sortList[0],
+}) => {
   const skip = (page - 1) * perPage;
 
-  const data = await contactModel.find().skip(skip).limit(perPage);
+  const data = await contactModel
+    .find()
+    .skip(skip)
+    .limit(perPage)
+    .sort({ [sortBy]: sortOrder });
   const totalItems = await contactModel.find().countDocuments();
 
   const paginationData = calcPaginationData({ page, perPage, totalItems });
