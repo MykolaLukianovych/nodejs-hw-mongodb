@@ -20,12 +20,8 @@ export const getContacts = async ({
   const paginationData = calcPaginationData({ page, perPage, totalItems });
 
   return {
-    status: 200,
-    message: 'Successfully found contacts!',
-    data: {
-      data,
-      ...paginationData,
-    },
+    data,
+    ...paginationData,
   };
 };
 
