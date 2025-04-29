@@ -8,6 +8,24 @@ import {
   refreshTokenLifeTime,
 } from '../constants/auth.js';
 
+const createSession = () => {
+  const accessToken = randomBytes(30).toString('base64');
+  const refreshToken = randomBytes(30).toString('base64');
+  const accessTokenValidUntil = Date.now() + accessTokenLifeTime;
+  const refreshTokenValidUntil = Date.now() + refreshTokenLifeTime;
+
+  return {
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil,
+    refreshTokenValidUntil,
+  };
+};
+
+export const findSession = (query) => Session.findOne(query);
+
+export const findUser = (query) => Session.findOne(query);
+
 export const registerUser = async (payload) => {
   const { email, password } = payload;
   const user = await User.findOne({ email });
@@ -35,14 +53,30 @@ export const loginUser = async (payload) => {
 
   await Session.findOneAndDelete({ userId: user._id });
 
-  const accessToken = randomBytes(30).toString('base64');
-  const refreshToken = randomBytes(30).toString('base64');
+  const session = createSession();
 
   return Session.create({
     userId: user._id,
-    accessToken,
-    refreshToken,
-    accessTokenValidUntil: Date.now() + accessTokenLifeTime,
-    refreshTokenValidUntil: Date.now() + refreshTokenLifeTime,
+    ...session,
+  });
+};
+
+export const refreshUser = async ({ refreshToken }) => {
+  const session = await findSession({ refreshToken });
+  if (!session) {
+    throw createHttpError(401, 'Session not found');
+  }
+  if (session.refreshTokenValidUntil < Date.now()) {
+    await Session.findOneAndDelete({ _id: session._id });
+    throw createHttpError(401, 'Session token espired');
+  }
+
+  await Session.findOneAndDelete({ _id: session._id });
+
+  const newSession = createSession();
+
+  return Session.create({
+    userId: session.userId,
+    ...newSession,
   });
 };
