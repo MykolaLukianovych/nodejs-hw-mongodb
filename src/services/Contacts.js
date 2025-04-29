@@ -7,15 +7,32 @@ export const getContacts = async ({
   perPage = 10,
   sortBy = '_contactId',
   sortOrder = sortList[0],
+  filter = {},
 }) => {
+  const limit = perPage;
   const skip = (page - 1) * perPage;
+
+  const contactsQuery = contactModel.find();
+
+  if (filter.userId) {
+    contactsQuery.where('userId').equals(filter.userId);
+  }
+
+  if (filter.type) {
+    contactsQuery.where('contactType').equals(filter.type);
+  }
+
+  if (filter.isFavourite !== undefined) {
+    contactsQuery.where('isFavourite').equals(filter.isFavourite);
+  }
+
+  const totalItems = await contactModel.find().countDocuments();
 
   const data = await contactModel
     .find()
     .skip(skip)
-    .limit(perPage)
+    .limit(limit)
     .sort({ [sortBy]: sortOrder });
-  const totalItems = await contactModel.find().countDocuments();
 
   const paginationData = calcPaginationData({ page, perPage, totalItems });
 

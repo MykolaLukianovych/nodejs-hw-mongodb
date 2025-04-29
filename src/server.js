@@ -6,11 +6,13 @@ import { notFoundHandler } from './middlewars/notFoundHandler.js';
 import { errorHandler } from './middlewars/errorHandler.js';
 import contactsRouter from './routers/contacts.js';
 import authRouter from './routers/auth.js';
+import cookieParser from 'cookie-parser';
 
 export const setupServer = () => {
   const app = express();
 
   app.use(cors());
+  app.use(cookieParser());
   app.use(express.json());
   // app.use(logger);
 
