@@ -53,7 +53,9 @@ export const addContactController = async (req, res) => {
     throw createHttpError(400, 'User is not authenticated');
   }
 
-  const contact = await addContact({ ...req.body, userId });
+  const photo = req.file?.path || '';
+
+  const contact = await addContact({ ...req.body, userId, photo });
 
   res.status(201).json({
     status: 201,
@@ -72,8 +74,10 @@ export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
   const contactIdAndUserId = { userId, _id: contactId };
 
-  const result = await updateContact(contactIdAndUserId, req.body);
-  console.log(result);
+  const photo = req.file?.path;
+  const updateData = photo ? { ...req.body, photo } : req.body;
+
+  const result = await updateContact(contactIdAndUserId, updateData);
 
   if (!result) {
     throw createHttpError(404, 'Contact not found');

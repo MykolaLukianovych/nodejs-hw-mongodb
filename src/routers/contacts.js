@@ -14,6 +14,7 @@ import {
 import { validateBody } from '../utils/validateBody.js';
 import { isValidId } from '../middlewars/isValidId.js';
 import { authenticate } from '../middlewars/authenticate.js';
+import upload from '../middlewars/upload.js';
 
 const contactsRouter = Router();
 
@@ -29,12 +30,14 @@ contactsRouter.get(
 
 contactsRouter.post(
   '/',
+  upload.single('photo'),
   validateBody(contactAddSchema),
   controllerWrapper(addContactController),
 );
 
 contactsRouter.patch(
   '/:contactId',
+  upload.single('photo'),
   isValidId,
   validateBody(contactUpdateSchema),
   controllerWrapper(patchContactController),
