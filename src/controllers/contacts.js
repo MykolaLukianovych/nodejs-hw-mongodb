@@ -53,7 +53,7 @@ export const addContactController = async (req, res) => {
     throw createHttpError(400, 'User is not authenticated');
   }
 
-  const photo = req.file?.path || '';
+  const photo = req.file ? req.file.path : '';
 
   const contact = await addContact({ ...req.body, userId, photo });
 
@@ -74,7 +74,7 @@ export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
   const contactIdAndUserId = { userId, _id: contactId };
 
-  const photo = req.file?.path;
+  const photo = req.file ? req.file.path : '';
   const updateData = photo ? { ...req.body, photo } : req.body;
 
   const result = await updateContact(contactIdAndUserId, updateData);
