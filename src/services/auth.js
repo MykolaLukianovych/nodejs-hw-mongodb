@@ -89,12 +89,13 @@ export const logoutUser = async (sessionId) => {
 
 export const sendResetEmail = async (email) => {
   const user = await User.findOne({ email });
+
   if (!user) {
     throw createHttpError(404, 'User not found!');
   }
 
   try {
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
       expiresIn: '5m',
     });
     const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${token}`;
