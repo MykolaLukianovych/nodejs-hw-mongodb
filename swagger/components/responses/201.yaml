@@ -1,0 +1,36 @@
+description: Successfully created a contact
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - status
+        - message
+        - data
+      properties:
+        status:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: Successfully created a contact!
+        data:
+          type: object
+          required:
+            - contact
+          properties:
+            contact:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: '65d1f7a2e8b7a40018a9c123'
+                name:
+                  type: string
+                  example: 'John Doe'
+                email:
+                  type: string
+                  example: 'johndoe@example.com'
+                phone:
+                  type: string
+                  example: '+1234567890'
